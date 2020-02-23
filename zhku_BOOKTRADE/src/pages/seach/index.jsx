@@ -1,5 +1,6 @@
 import Taro, { Component } from "@tarojs/taro"
 import { View } from '@tarojs/components'
+import { AtSearchBar } from 'taro-ui'
 
 export default class Seach extends Component {
 
@@ -10,7 +11,11 @@ export default class Seach extends Component {
     render() {
 
         return(
-            <View>个人页面</View>
+            <View>
+                <AtSearchBar 
+                  actionName='搜索'
+                />
+            </View>
         )
     }
 

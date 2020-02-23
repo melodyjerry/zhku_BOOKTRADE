@@ -1,17 +1,22 @@
 import Taro, { Component } from "@tarojs/taro"
 import { View } from '@tarojs/components'
+import {  } from 'taro-ui'
+import './index.scss'
 
-export default class Seach extends Component {
+export default class className extends Component {
 
     constructor(props) {
         super(props)
     }
 
+    state = {
+        
+    }
+
     render() {
 
         return(
-            <View>个人页面</View>
+            <View></View>
         )
     }
-
 }
