@@ -1,0 +1,23 @@
+.component {
+    background: white;
+    margin: 20px 0;
+    padding: 1px;
+    &-title {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 0 40px;
+        &-bold {
+            font-size: 30px;
+            font-weight: bolder;
+        }
+        &-grey {
+            font-size: 25px;
+            color: gray;
+        }
+    }
+    &-container {
+        display: flex;
+        flex-direction: column;
+    }
+}

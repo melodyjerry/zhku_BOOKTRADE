@@ -16,7 +16,7 @@ export default class SingleCategory extends Component {
         // console.log(this.state.params.categoryType)
         return(
             <View>
-                分类
+                分类:{this.state.params.categoryType}
             </View>
         )
     }

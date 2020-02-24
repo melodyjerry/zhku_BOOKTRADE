@@ -25,21 +25,22 @@ class App extends Component {
       'pages/seach/index',
       'pages/user/index',
       'pages/singleCategory/index',
+      'pages/moreLastestBook/index',
     ],
     tabBar: {
       color: "#666",
-      selectedColor: "#FF4900",
+      selectedColor: "#000000",
       backgroundColor: "#F1F1F1",
       borderStyle: 'black',
       list: [{
         pagePath: "pages/home/index",
-        // iconPath: "./assets/tab-bar/home.png",
-        // selectedIconPath: "./assets/tab-bar/home-active.png",
+        iconPath: "./assets/tab-bar/首页.png",
+        selectedIconPath: "./assets/tab-bar/首页s.png",
         text: "首页 "
       },{
         pagePath: "pages/user/index",
-        // iconPath: "./assets/tab-bar/course.png",
-        // selectedIconPath: "./assets/tab-bar/course-active.png",
+        iconPath: "./assets/tab-bar/用户.png",
+        selectedIconPath: "./assets/tab-bar/用户s.png",
         text: "个人页面"
       }]
     },

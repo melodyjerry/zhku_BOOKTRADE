@@ -1,12 +1,9 @@
 .page {
+    background: rgb(245, 245, 245);
     &-seachContainer {
-        box-shadow: 0 0 10px 0 black;
+        box-shadow: 0 0 10px 0 gray;
     }
-
     &-container {
-        margin-top: 100px;
-        &-section {
-
-        }
+        margin-top: 76px;
     }
 }
