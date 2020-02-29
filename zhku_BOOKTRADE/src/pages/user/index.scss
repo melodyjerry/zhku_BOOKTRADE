@@ -1,0 +1,51 @@
+@mixin flex($arg) {
+    display: flex;
+    flex-direction: $arg;
+}
+@mixin leave {
+    margin: 20px;
+}
+.page {
+    padding: 20px 30px;
+    &-userInfo {
+        @include flex(row);
+        @include leave;
+        justify-content: space-around;
+        &-avatar {
+            height: 200px;
+            @include flex(column);
+            align-items: center;
+            width: 30%;
+        }
+        &-action {
+            @include flex(row);
+            color: gray;
+            justify-content: flex-end;
+            align-items: center;
+            width: 40%;
+        }
+    }
+    &-userAssets {
+        @include leave;
+        &-row {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            &-left {
+    
+            }
+            &-right {
+    
+            }
+        }
+    }
+    &-censor {
+        @include leave;
+
+    }
+    &-server {
+        @include leave;
+
+    }
+}

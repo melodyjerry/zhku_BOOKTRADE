@@ -26,6 +26,7 @@ class App extends Component {
       'pages/user/index',
       'pages/singleCategory/index',
       'pages/moreLastestBook/index',
+      'pages/test/index',
     ],
     tabBar: {
       color: "#666",

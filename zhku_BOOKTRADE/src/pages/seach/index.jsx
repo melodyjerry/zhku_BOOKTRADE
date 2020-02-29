@@ -15,6 +15,7 @@ export default class Seach extends Component {
                 <AtSearchBar 
                   actionName='搜索'
                 />
+                搜索页面
             </View>
         )
     }

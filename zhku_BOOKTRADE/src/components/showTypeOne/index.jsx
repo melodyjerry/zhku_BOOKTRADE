@@ -1,7 +1,6 @@
-import { Component } from "@tarojs/taro"
-import { AtCard } from 'taro-ui'
-import './index.scss'
+import Taro, { Component } from "@tarojs/taro"
 import { View } from "@tarojs/components"
+import './index.scss'
 
 const baseClass = 'component'
 export default class ShowTypeOne extends Component {
@@ -27,12 +26,6 @@ export default class ShowTypeOne extends Component {
         const { extra, title, handler } = this.props
         return(
             <View className={baseClass}>
-                {/* <AtCard
-                  extra={extra}
-                  title={title}
-                >
-                    {this.props.children}
-                </AtCard> */}
                 <View className={`${baseClass}-title`}>
                     <View className={`${baseClass}-title-bold`}>{title}</View>
                     <View className={`${baseClass}-title-grey`} onClick={handler}>{extra}</View>

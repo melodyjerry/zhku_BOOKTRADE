@@ -1,17 +1,163 @@
 import Taro, { Component } from "@tarojs/taro"
 import { View } from '@tarojs/components'
+import { connect } from '@tarojs/redux'
+import { censorArr, serverArr } from '@constants/user'
+import { AtCard, AtAvatar, AtGrid, AtToast } from 'taro-ui'
+import * as actions from '@actions/user'
+import { getUserOpenId, getUserInfo, getUserPoint } from '@utils/user'
 
-export default class Seach extends Component {
+import './index.scss'
+
+const baseClass = 'page'
+
+@connect(state => state.user, { ...actions })
+class User extends Component {
 
     constructor(props) {
         super(props)
     }
 
-    render() {
+    state = {
+        nickName: '',
+        avatarUrl: '',
+        credit: 0,
+    }
 
+    componentDidMount() {
+        this.applyData()
+    }
+
+    componentDidShow() { }
+
+    /**
+     * props修改触发
+     * @param {*} nextProps ：下一个props
+     */
+    componentWillReceiveProps(nextProps) {
+        // console.log(this.props, nextProps)
+    }
+
+    config = {
+        navigationBarTitleText: '个人资料'
+    }
+
+    /**
+     * 重新渲染整个页面的数据
+     */
+    applyData = async () => {
+        // 获得缓存数据并处理
+        let state = {}
+        if (this.props.isLogin) {
+            const storageUserInfo = await Taro.getStorage({ key: 'userInfo'})
+            const storageCredit = await getUserPoint()
+            const { nickName, avatarUrl } = storageUserInfo.data.userInfo
+            const { credit } = storageCredit.data
+            state.nickName = nickName
+            state.avatarUrl = avatarUrl
+            state.credit = credit
+        } else {
+            state.nickName = '未登录'
+            state.avatarUrl = '',
+            state.credit = 0
+        }
+        this.setState(state)
+    }
+
+    /**
+     * 登录/注册则修改登录状态为true，并且缓存openId和userInfo
+     */
+    logIn = async () => {
+        const { dispatchLogIn } = this.props
+        dispatchLogIn()                          // 修改登录状态
+        const openId = await getUserOpenId()
+        const userInfo = await getUserInfo()
+        Taro.setStorageSync('openId', openId)
+        Taro.setStorageSync('userInfo', userInfo)
+        this.applyData()  // 渲染数据
+    }
+
+    /**
+     * 登出
+     */
+    logOut = async () => {
+        const { dispatchLogOut } = this.props
+        dispatchLogOut()       // 修改登录状态
+        Taro.clearStorage()    // 清空缓存
+        this.applyData()  // 渲染数据
+    }
+
+    /**
+     * 跳转到用户审核页面，待评价
+     */
+    handleCensorClick = (item, index) => {
+        if (!this.props.isLogin) { this.logIn() }
+        Taro.navigateTo({
+            url: `/pages/userCensor/index?type=${index}`
+        })
+    }
+
+    /**
+     * 跳转到我的服务器页面
+     */
+    handleServerClick = (item, index) => {
+
+    }
+
+
+    render() {
+        const { isLogin } = this.props
+        const { nickName, avatarUrl } = this.state
+        
         return(
-            <View>个人页面</View>
+            <View className={baseClass}>
+                <View className={`${baseClass}-userInfo`}>
+                    <View className={`${baseClass}-userInfo-avatar`}>
+                        <AtAvatar 
+                          size='large'
+                          image={avatarUrl}
+                          text={nickName}
+                        />
+                        <View>{nickName}</View>
+                    </View>
+                    <View className={`${baseClass}-userInfo-action`}>
+                        {!isLogin ? 
+                        <View onClick={this.logIn}>登录/注册</View> : 
+                        <View onClick={this.logOut}>登出</View>}
+                    </View>
+                </View>
+                <View className={`${baseClass}-userAssets`}>
+                    <AtCard title='我的资源'>
+                        <View className={`${baseClass}-userAssets-row`}>
+                            <View className={`${baseClass}-userAssets-row-left`}>剩余积分</View>
+                            <View className={`${baseClass}-userAssets-row-right`}>{this.state.credit}</View>
+                        </View>
+                    </AtCard>
+                </View>
+                <View className={`${baseClass}-censor`}>
+                    <AtCard title='我的发布'>
+                        <AtGrid 
+                          hasBorder={false}
+                          data={censorArr}
+                          columnNum={4}
+                          onClick={this.handleCensorClick}
+                        />
+                    </AtCard>
+                </View>
+                <View className={`${baseClass}-server`}>
+                    <AtCard title='我的服务'>
+                        <AtGrid 
+                          hasBorder={false}
+                          data={serverArr}
+                          columnNum={4}
+                          onClick={this.handleServerClick}
+                        />
+                    </AtCard>
+                </View>
+                
+            </View>
         )
     }
 
 }
+
+export default User

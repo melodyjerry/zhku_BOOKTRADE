@@ -17,7 +17,7 @@ export default class BookItemColumn extends Component {
         const { pic, book_name, book_quantity, price } = this.props
         return(
             <View className={baseClass}>
-                <Image className={`${baseClass}-image`} src={pic} mode='widthFix'/>
+                <Image className={`${baseClass}-image`} src={pic} mode='widthFix' />
                 <View className={`${baseClass}-info`}>
                     <View className={`${baseClass}-info-bold`}>{book_name}</View>
                     <View className={`${baseClass}-info-grey`}>价格：{price}</View>

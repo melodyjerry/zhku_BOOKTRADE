@@ -16,10 +16,9 @@ import { AtSearchBar } from 'taro-ui'
 import './index.scss'
 
 const baseClass = 'page'
+
 export default class Home extends Component {
 
-    config = {}
-    
     constructor(props) {
         super(props)
     }
@@ -36,6 +35,10 @@ export default class Home extends Component {
     componentWillMount() {
         this.loadHotBook()
         this.loadLastestBook()
+    }
+    
+    config = {
+        navigationBarTitleText: '个人资料'
     }
 
     /**
@@ -105,7 +108,7 @@ export default class Home extends Component {
                   onActionClick={this.seachOnActionClick.bind(this)}
                 />
                 <View className={`${baseClass}-container`}>
-                    <CategoryNavigate/>
+                    <CategoryNavigate />
                     <ShowTypeOne
                       extra='换一批'
                       title='热门书籍'
@@ -115,7 +118,6 @@ export default class Home extends Component {
                           className='test-h'
                           indicatorColor='#999'
                           displayMultipleItems={3}
-                          circular={true}
                           indicatorDots
                         >
                             {hotBookList.map((value) => {

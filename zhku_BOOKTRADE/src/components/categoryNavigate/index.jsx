@@ -1,8 +1,8 @@
 import Taro, { Component } from "@tarojs/taro"
+import { View } from "@tarojs/components"
 import { AtTabBar } from 'taro-ui'
 
 import './index.scss'
-import { View } from "@tarojs/components"
 
 const categoryNameArr = ['H', 'I', 'K', 'T', 'more']
 export default class CategoryNavigate extends Component {
