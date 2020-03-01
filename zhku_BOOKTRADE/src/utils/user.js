@@ -21,12 +21,13 @@ export async function getUserOpenId () {
  */
 export async function getUserInfo () {
     try {
-        const $scope = await Taro.getSetting()  //获得权限
-        const { authSetting } = $scope
+        const scope = await Taro.getSetting()  //获得权限
+        const { authSetting } = scope
 
         // 没有授权则去授权
-        if (!authSetting["scope.userInfo"]) await Taro.authorize({scope: 'scope.userInfo'})
-        
+        let msg = {}
+        if (!authSetting["scope.userInfo"]) { msg = await Taro.authorize({scope: 'scope.userInfo'}) }
+        if (msg.errMsg !== 'authorize:ok' && !authSetting["scope.userInfo"]) return
         const { code } = await Taro.login()
         const userInfo = await Taro.getUserInfo()
 
@@ -35,6 +36,7 @@ export async function getUserInfo () {
         throw error
     }
 }
+
 
 export async function getUserPoint() {
     try {

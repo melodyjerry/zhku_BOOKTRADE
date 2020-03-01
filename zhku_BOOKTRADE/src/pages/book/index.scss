@@ -1,0 +1,18 @@
+@import '../../styles/page.scss';
+
+
+.page {
+    background: $page-background;
+    &-section {
+        background: white;
+        margin-bottom: 30px;
+    }
+    &-end {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        font-size: 30px;
+        color: gray;
+        height: 100px;
+    }
+}

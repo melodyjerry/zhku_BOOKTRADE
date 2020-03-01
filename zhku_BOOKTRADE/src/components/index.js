@@ -1,4 +1,6 @@
 export { default as CategoryNavigate } from './categoryNavigate'
 export { default as ShowTypeOne } from './showTypeOne'
 export { default as BookItemRow } from './bookItemRow'
+export { default as BookInfo } from './bookInfo'
 export { default as BookItemColumn } from './bookItemColumn'
+export { default as BookComment } from './bookComment'

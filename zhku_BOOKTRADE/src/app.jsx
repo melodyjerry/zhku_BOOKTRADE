@@ -26,6 +26,8 @@ class App extends Component {
       'pages/user/index',
       'pages/singleCategory/index',
       'pages/moreLastestBook/index',
+      'pages/book/index',
+      'pages/userCensor/index',
       'pages/test/index',
     ],
     tabBar: {

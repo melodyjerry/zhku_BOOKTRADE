@@ -1,0 +1,45 @@
+@mixin flex($arg) {
+    display: flex;
+    flex-direction: $arg;    
+}
+
+
+.component {
+    background: white;
+    @include flex(column);
+    align-items: center;
+    padding-bottom: 20px;
+    &-imageView {
+        height: 600px;
+        @include flex(column);
+        justify-content: center;
+        align-items: center;
+        &-image {
+            width: 400px;
+        }
+        &-font {
+            font-size: 40px;
+            font-weight: 500;
+        }
+    }
+    &-info {
+        width: 80%;
+        @include flex(column);
+        &-row {
+            width: 100%;
+            @include flex(row);
+            &-span {
+                width: 20%;
+                color: gray;
+                font-size: 30px;
+            }
+            &-value {
+                width: 80%;
+                font-size: 30px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}

@@ -1,3 +1,6 @@
+@import '../../styles/page.scss';
+
+
 @mixin flex($arg) {
     display: flex;
     flex-direction: $arg;
@@ -7,6 +10,7 @@
 }
 .page {
     padding: 20px 30px;
+    background: $page-background;
     &-userInfo {
         @include flex(row);
         @include leave;

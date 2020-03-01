@@ -27,7 +27,7 @@ class User extends Component {
         this.applyData()
     }
 
-    componentDidShow() { }
+    componentDidShow = async () => {}
 
     /**
      * props修改触发
@@ -40,6 +40,7 @@ class User extends Component {
     config = {
         navigationBarTitleText: '个人资料'
     }
+
 
     /**
      * 重新渲染整个页面的数据
