@@ -12,7 +12,7 @@ import {
     BookItemColumn,
 } from '@components'
 
-import { AtSearchBar } from 'taro-ui'
+import { AtSearchBar, AtFab } from 'taro-ui'
 import './index.scss'
 
 const baseClass = 'page'
@@ -96,10 +96,46 @@ export default class Home extends Component {
         Taro.navigateTo({url: `/pages/seach/index?seachValue=${this.state.seachValue}`})
     }
 
+    onButtonClick (payload) {
+        const { type } = payload
+        switch(type) {
+            case 'sub': {
+                return Taro.scanCode().then(res => {
+                    Taro.navigateTo({ url: `/pages/book/index?isbn=${res.result}&type=${type}` })
+                }).catch(() => { })
+            }
+            case 'get': {
+                return Taro.scanCode().then(res => {
+                    Taro.navigateTo({ url: `/pages/book/index?isbn=${res.result}&type=${type}` })
+                }).catch(() => { })
+            }
+            case 'censor': {
+                return Taro.scanCode().then(res => {
+                    Taro.navigateTo({ url: `/pages/censor/index` })
+                }).catch(() => { })
+            }
+            default: {
+                console.log('def')
+                return
+            }
+        }
+    }
+
     render() {
         const { hotBookList, lastestBookList } = this.state
         return(
-            <View className={baseClass}>
+            <View className={`${baseClass}`}>
+                <View className={`${baseClass}-flow`}>
+                    <AtFab onClick={this.onButtonClick.bind(this, { type: 'sub'} )}>
+                        <Text className='at-fab__icon at-icon at-icon-upload'></Text>
+                    </AtFab>
+                    <AtFab onClick={this.onButtonClick.bind(this, { type: 'get'} )}>
+                        <Text className='at-fab__icon at-icon at-icon-download'></Text>
+                    </AtFab>
+                    <AtFab onClick={this.onButtonClick.bind(this, { type:'censor'} )}>
+                        <Text className='at-fab__icon at-icon at-icon-bullet-list'></Text>
+                    </AtFab>
+                </View>
                 <AtSearchBar
                   className={`${baseClass}-seachContainer`}
                   fixed
@@ -125,6 +161,7 @@ export default class Home extends Component {
                                 return(
                                     <SwiperItem key={isbn}>
                                         <BookItemRow
+                                          isbn={isbn}
                                           pic={pic}
                                           book_name={book_name}
                                           author={author}
@@ -141,12 +178,13 @@ export default class Home extends Component {
                       handler={this.handlerClickMoreLastest}
                     >
                         {lastestBookList.map((value) => {
-                            const { pic, book_name, isbn, book_quantity, price } = value
+                            const { pic, title, isbn, book_quantity, price } = value
                             return(
                                 <BookItemColumn 
                                   key={isbn}
+                                  isbn={isbn}
                                   pic={pic}
-                                  book_name={book_name}
+                                  book_name={title}
                                   book_quantity={book_quantity}
                                   price={price}
                                 />

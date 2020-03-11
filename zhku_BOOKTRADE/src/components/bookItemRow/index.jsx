@@ -13,10 +13,18 @@ export default class BookItemRow extends Component {
         
     }
 
+    onClick(isbn) {
+        Taro.navigateTo({ url: `/pages/book/index?isbn=${isbn}&type=show` })
+    }
+
     render() {
-        const { pic, book_name, author, price } = this.props
+        const { pic, book_name, author, price, isbn } = this.props
         return(
-            <View className={baseClass}>
+            
+            <View 
+              className={baseClass} 
+              onClick={this.onClick.bind(this, isbn)}
+            >
                 <Image 
                   className={`${baseClass}-image`} 
                   src={pic}

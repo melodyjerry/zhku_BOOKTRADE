@@ -25,10 +25,12 @@ class App extends Component {
       'pages/seach/index',
       'pages/user/index',
       'pages/singleCategory/index',
+      'pages/allCategory/index',
       'pages/moreLastestBook/index',
       'pages/book/index',
       'pages/userCensor/index',
       'pages/test/index',
+      // 'pages/censor/index',
     ],
     tabBar: {
       color: "#666",
@@ -50,7 +52,7 @@ class App extends Component {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#fff',
-      navigationBarTitleText: 'WeChat',
+      navigationBarTitleText: '仲恺旧书平台',
       navigationBarTextStyle: 'black'
     }
   }

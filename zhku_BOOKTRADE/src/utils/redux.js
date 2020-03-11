@@ -1,4 +1,6 @@
-import fetch from './request'
+import { get, set } from '@utils/global_data'
+import Taro from '@tarojs/taro'
+import fetch from '@utils/request'
 
 /**
  * 适当封闭 Redux, 简化调用
@@ -11,22 +13,22 @@ import fetch from './request'
  * @param {String} options.type
  */
 
- export function createAction(options) {
-    //  console.log("这是封装请求数据" +JSON.stringify(options) )
-     const { url, payload, method, fetchOptions, cb, type } = options
-     return dispatch => {
-         return fetch({ url, payload, method, ...fetchOptions }).then(
+export function createAction(options) {
+    const { url, payload={}, method, fetchOptions, cb, type } = options
+    // const data = get('openId')
+    const data = Taro.getStorageSync('openid')
+    payload.openid = data || ''
+    return dispatch => {
+        return fetch({ url, payload, method, ...fetchOptions }).then(
              
-             res => {
-                 
-    //  console.log("这是封装请求回来的数据" +JSON.stringify(res) )
-                 let object = {
+            res => {
+                let object = {
                     type,
                     payload: cb ? cb(res) : res
-                 }
-                 dispatch(object)
-                 return res
-             }
-         )
-     }
- }
+                }
+                dispatch(object)
+                return res
+            }
+        )
+    }
+}

@@ -4,6 +4,7 @@ import { connect } from '@tarojs/redux'
 import { censorArr, serverArr } from '@constants/user'
 import { AtCard, AtAvatar, AtGrid, AtToast } from 'taro-ui'
 import * as actions from '@actions/user'
+import { get, set } from '@utils/global_data'
 import { getUserOpenId, getUserInfo, getUserPoint } from '@utils/user'
 
 import './index.scss'
@@ -21,6 +22,7 @@ class User extends Component {
         nickName: '',
         avatarUrl: '',
         credit: 0,
+        loadingOpen: false,
     }
 
     componentDidMount() {
@@ -70,9 +72,11 @@ class User extends Component {
     logIn = async () => {
         const { dispatchLogIn } = this.props
         dispatchLogIn()                          // 修改登录状态
-        const openId = await getUserOpenId()
+        const storage = await getUserOpenId()
         const userInfo = await getUserInfo()
-        Taro.setStorageSync('openId', openId)
+        set('openId', storage.data.openid)
+        set('userInfo', userInfo)
+        Taro.setStorageSync('openId', storage.data.openid)
         Taro.setStorageSync('userInfo', userInfo)
         this.applyData()  // 渲染数据
     }
@@ -107,10 +111,11 @@ class User extends Component {
 
     render() {
         const { isLogin } = this.props
-        const { nickName, avatarUrl } = this.state
+        const { nickName, avatarUrl, loadingOpen } = this.state
         
         return(
             <View className={baseClass}>
+                <AtToast isOpened={loadingOpen} text="正在加载..." status='loading' icon="{icon}"></AtToast>
                 <View className={`${baseClass}-userInfo`}>
                     <View className={`${baseClass}-userInfo-avatar`}>
                         <AtAvatar 

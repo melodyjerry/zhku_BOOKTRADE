@@ -44,6 +44,10 @@ export default class BookInfo extends Component {
                         <View className={`${baseClass}-info-row-span`}>定价</View>
                         <View className={`${baseClass}-info-row-value`}>{data.price}</View>
                     </View>
+                    <View className={`${baseClass}-info-row`}>
+                        <View className={`${baseClass}-info-row-span`}>库存</View>
+                        <View className={`${baseClass}-info-row-value`}>{data.book_quantity}</View>
+                    </View>
                 </View>
             </View>
         )

@@ -1,5 +1,16 @@
 .page {
     background: rgb(245, 245, 245);
+
+
+    &-flow {
+        position: fixed;
+        z-index: 999;
+        bottom: 10px;
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-around;
+    }
     &-seachContainer {
         box-shadow: 0 0 10px 0 gray;
     }

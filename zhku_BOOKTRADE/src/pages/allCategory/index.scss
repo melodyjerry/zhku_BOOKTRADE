@@ -1,0 +1,31 @@
+@mixin flex($arg) {
+    display: flex;
+    flex-direction: $arg;
+}
+
+.page {
+
+    &-container {
+        width: 100%;
+        @include flex(row);
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-items: flex-start;
+            &-section {
+            width: 200px;
+            height: 420px;
+            @include flex(column);
+            justify-content: flex-start;
+            .image {
+                width: 200px;
+            }
+            .name {
+                font-size: 30px;
+            }
+            .quantity {
+                font-size: 25px;
+                color: gray;
+            }
+        }
+    }
+}

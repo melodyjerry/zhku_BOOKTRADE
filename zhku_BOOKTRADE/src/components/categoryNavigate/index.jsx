@@ -17,7 +17,8 @@ export default class CategoryNavigate extends Component {
 
 
     handleClick = (value) => {
-        Taro.navigateTo({url: `/pages/singleCategory/index?categoryType=${categoryNameArr[value]}`})
+        if (value !== 4) return Taro.navigateTo({url: `/pages/singleCategory/index?categoryType=${categoryNameArr[value]}`})
+        return Taro.navigateTo({ url: '/pages/allCategory/index' })
     }
 
     render() {

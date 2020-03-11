@@ -2,10 +2,11 @@ import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import * as actions from '@actions/book'
 import { connect } from '@tarojs/redux'
+import { AtAccordion } from 'taro-ui'
 import { BookInfo, BookComment } from '@components'
-
 import { ButtomView } from './buttomView'
 import './index.scss'
+
 
 const baseClass = 'page'
 
@@ -17,9 +18,10 @@ class Book extends Component {
     }
 
     state = {
-        bookInfo: {},
-        bookComment: [],
-        bookScore: {},
+        type: '',
+        currentPrice: 0,
+        originPrice: 0,
+        descOpen: false,
     }
 
 
@@ -27,24 +29,41 @@ class Book extends Component {
      * 预加载，这个是要从别的页面跳转过来才会加载的
      * @param {*} params 
      */
-    // componentWillPreload(params) {
-    //     const { Id } = params
-    //     const url = `${API_GET_MEMBER_INFO_BY_ID}?Id=${Id}`
-    //     this.loadPackages({ Id })
-    //     return fetch({ url })
-    // }
-
-    async componentWillMount() {
-        const ISBN = '9787040403015'
-        const payload = {
-            isbn: ISBN
-        }
+    async componentWillPreload(params) {
+        const { isbn, type='show' } = params
+        const payload = { isbn }
         await this.props.dispatchLoadBookInfo(payload)
         await this.props.dispatchLoadBookComment(payload)
+        this.setState({
+            type: type,
+        })
+    }
+
+    async componentWillMount() {
+        const { bookInfo } = this.props
+        const { type } = this.state
+        this.setState({
+            currentPrice: parseInt(bookInfo.price*( type === 'get' ? 0.7 : 0.6 )),
+            originPrice: bookInfo.price,
+        })
+    }
+
+    setValue (value) {
+        this.setState({
+            descOpen: value
+        })
+    }
+
+    /**
+     * 捐书/取书按钮
+     */
+    submit () {
+
     }
 
     render() {
-        const { bookInfo, bookComment, bookScore  } = this.props
+        const { bookInfo, bookComment, bookScore } = this.props
+        const { currentPrice, originPrice, type } = this.state
         return(
             <View className={`${baseClass}`}>
                 <View className={`${baseClass}-section`}>
@@ -52,8 +71,18 @@ class Book extends Component {
                       data={bookInfo}
                     />
                 </View>
+                {/* <View className={`${baseClass}-section`}>
+                </View> */}
                 <View className={`${baseClass}-section`}>
-                    评分图
+                    <AtAccordion
+                      open={this.state.descOpen}
+                      onClick={ this.setValue.bind(this) }
+                      title='书籍简介'
+                    >
+                        <View className={`${baseClass}-section-summary`}>
+                            { bookInfo.summary }
+                        </View>
+                    </AtAccordion>
                 </View>
                 <View className={`${baseClass}-section`}>
                     <BookComment 
@@ -62,9 +91,10 @@ class Book extends Component {
                 </View>
                 <View className={`${baseClass}-end`}>--end--</View>
                 <ButtomView 
-                  originPrice={bookInfo.price}
-                  currentPrice={bookInfo.price*0.6}
-                  buttonValue='去购买'
+                    submit={this.submit.bind(this)}
+                    originPrice={originPrice}
+                    currentPrice={currentPrice}
+                    type={type}
                 />
             </View>
         )

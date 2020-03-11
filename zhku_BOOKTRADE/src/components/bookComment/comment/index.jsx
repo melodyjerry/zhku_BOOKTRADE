@@ -1,6 +1,6 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
-import { AtCard } from 'taro-ui'
+import { AtCard, AtRate } from 'taro-ui'
 
 import './index.scss'
 
@@ -20,8 +20,13 @@ export default class Comment extends Component {
             <View className={`${baseClass}`}>
                 <AtCard
                   note={`发布时间:${date}`}
-                  title={`user:${openId}`}
+                  title={`${openId}`}
+                  thumb='https://www.shuaixiaoxiao.com/assets/user/评论用户.png'
                 >
+                    <AtRate
+                      size={10}
+                      value={parseInt(score)}
+                    />
                 {evaluate}
                 </AtCard>
             </View>
