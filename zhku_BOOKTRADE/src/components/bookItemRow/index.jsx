@@ -18,7 +18,7 @@ export default class BookItemRow extends Component {
     }
 
     render() {
-        const { pic, book_name, author, price, isbn } = this.props
+        const { pic, book_name, author, price, isbn, fever } = this.props
         return(
             
             <View 
@@ -34,6 +34,10 @@ export default class BookItemRow extends Component {
                     <View className={`${baseClass}-info-name`}>{book_name}</View>
                     <View className={`${baseClass}-info-author`}>{author}</View>
                     <View className={`${baseClass}-info-price`}>原价:￥{price}</View>
+                    <View className={`${baseClass}-info-browse`}>
+                        <View className='at-icon at-icon-eye'></View>
+                        {fever}
+                    </View>
                 </View>
             </View>
         )

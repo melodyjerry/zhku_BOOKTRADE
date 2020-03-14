@@ -3,6 +3,7 @@ import { View } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
 import { censorArr, serverArr } from '@constants/user'
 import { AtCard, AtAvatar, AtGrid, AtToast } from 'taro-ui'
+import { superUser } from '@constants/superUser'
 import * as actions from '@actions/user'
 import { get, set } from '@utils/global_data'
 import { getUserOpenId, getUserInfo, getUserPoint } from '@utils/user'
@@ -21,7 +22,7 @@ class User extends Component {
     state = {
         nickName: '',
         avatarUrl: '',
-        credit: 0,
+        credit: '--',
         loadingOpen: false,
     }
 
@@ -40,7 +41,7 @@ class User extends Component {
     }
 
     config = {
-        navigationBarTitleText: '个人资料'
+        navigationBarTitleText: 'USER'
     }
 
 
@@ -61,7 +62,7 @@ class User extends Component {
         } else {
             state.nickName = '未登录'
             state.avatarUrl = '',
-            state.credit = 0
+            state.credit = '--'
         }
         this.setState(state)
     }
@@ -71,10 +72,15 @@ class User extends Component {
      */
     logIn = async () => {
         const { dispatchLogIn } = this.props
-        dispatchLogIn()                          // 修改登录状态
         const storage = await getUserOpenId()
         const userInfo = await getUserInfo()
+        dispatchLogIn()                          // 修改登录状态
         set('openId', storage.data.openid)
+        superUser.map((value, index) => {
+            if (value === storage.data.openid) {
+                set('isSuperUser', true)
+            }
+        })
         set('userInfo', userInfo)
         Taro.setStorageSync('openId', storage.data.openid)
         Taro.setStorageSync('userInfo', userInfo)
@@ -96,13 +102,14 @@ class User extends Component {
      */
     handleCensorClick = (item, index) => {
         if (!this.props.isLogin) { this.logIn() }
+        if (index === 3) return Taro.navigateTo({ url: '/pages/beCommentList/index' })
         Taro.navigateTo({
             url: `/pages/userCensor/index?type=${index}`
         })
     }
 
     /**
-     * 跳转到我的服务器页面
+     * 跳转到我的服务页面
      */
     handleServerClick = (item, index) => {
 

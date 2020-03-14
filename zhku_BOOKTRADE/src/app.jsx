@@ -28,9 +28,11 @@ class App extends Component {
       'pages/allCategory/index',
       'pages/moreLastestBook/index',
       'pages/book/index',
+      'pages/beCommentList/index',
+      'pages/beCommentList/comment/index',
       'pages/userCensor/index',
       'pages/test/index',
-      // 'pages/censor/index',
+      'pages/censor/index',
     ],
     tabBar: {
       color: "#666",

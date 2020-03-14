@@ -1,5 +1,6 @@
 import Taro from '@tarojs/taro'
 import fetch from '@utils/request'
+import { API_GET_USER_POINT, API_GET_USER_OPENID } from '@constants/api'
 
 /**
  * 获取openid
@@ -11,7 +12,7 @@ export async function getUserOpenId () {
     
     const params = {}
     params.payload = { code }
-    params.url = 'https://www.shuaixiaoxiao.com/wechat-return/UserInteract/wx_openid.php'
+    params.url = API_GET_USER_OPENID
     const response = await fetch(params)
     return response
 }
@@ -40,12 +41,11 @@ export async function getUserInfo () {
 
 export async function getUserPoint() {
     try {
-        const storage = await Taro.getStorage({ key: 'openId' })
-        const openId = storage.data.openid
-        const params = {}
-        params.payload = { openid: openId }
-        params.url = 'https://www.shuaixiaoxiao.com/wechat-return/UserInteract/personal_getPoint.php' 
-        const response = await fetch(params)
+        const openid = Taro.getStorageSync('openId')
+        const request = {}
+        request.payload = { openid }
+        request.url = API_GET_USER_POINT 
+        const response = await fetch(request)
         return response
     } catch (err) {
         throw err

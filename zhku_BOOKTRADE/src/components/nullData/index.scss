@@ -10,7 +10,7 @@
     height: 200px;
     @include flex();
     &-view {
-        width: 300px;
+        width: 350px;
         height: 100px;
         @include flex();
         .image {

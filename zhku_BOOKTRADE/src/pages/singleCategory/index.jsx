@@ -22,6 +22,10 @@ class SingleCategory extends Component {
         this.loadCategoryBook({ categoryType })
     }
 
+    config = {
+        navigationBarTitleText: 'CATEGORY'
+    }
+
     componentDidMount() {
         if ( this.props.singleCategoryInfo.ret === -1 ) {
             Taro.showToast({ title: '暂无数据', icon: 'none' }).then(() => {
@@ -33,9 +37,9 @@ class SingleCategory extends Component {
     }
 
     async loadCategoryBook(params) {
-        const { categoryType, sortTypeIndex=3 } = params
+        const { categoryType, sortTypeIndex=3, bookTypeIndex=-1 } = params
         await this.props.dispatchLoadSingleCategoryInfo({
-            bookTypeIndex: -1, 
+            bookTypeIndex: bookTypeIndex, 
             bookTypeStr: categoryType, 
             sortTypeIndex: sortTypeIndex
         })

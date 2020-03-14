@@ -1,12 +1,20 @@
 import {
     GETBOOKCOMMENT,
-    GETBOOKINFO
+    GETBOOKINFO,
+    GETMOREBOOK,
 } from '@constants/book'
+
+import {
+    SEARCHBOOK
+} from '@constants/search'
 
 const INITIAL_STATE ={
     bookInfo: {},
     bookComment: [],
     bookScore: {},
+    lastestBook: [],
+    seachBook: [],
+    hasMore: true,
 }
 
 export default function book(state = INITIAL_STATE, action) { 
@@ -28,8 +36,18 @@ export default function book(state = INITIAL_STATE, action) {
                 ...state,
                 bookComment: action.payload.data.commentInfos,
             }
+        case GETMOREBOOK:
+            return {
+                ...state,
+                lastestBook: action.payload.data.ret === 0 ? state.lastestBook.concat(action.payload.data.books_list) : state.lastestBook,
+                hasMore: action.payload.data.ret === -1 ? false : true
+            }
+        case SEARCHBOOK:
+            return {
+                ...state,
+                seachBook: action.payload.data.ret === 0 ? action.payload.data.books_list : {}
+            }
         default:
             return state
-
     }
 }

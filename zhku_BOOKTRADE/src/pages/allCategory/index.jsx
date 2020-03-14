@@ -26,6 +26,10 @@ class AllCategory extends Component {
 
     }
 
+    config = {
+        navigationBarTitleText: 'TOTALCATEGORY'
+    }
+
     
     async componentDidMount() {
         await this.props.dispatchLoadAllCategoryInfo()

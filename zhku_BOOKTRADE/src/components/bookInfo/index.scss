@@ -34,7 +34,15 @@
                 font-size: 30px;
             }
             &-value {
-                width: 80%;
+                width: 55%;
+                font-size: 30px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+            &-browse {
+                color: gray;
+                width: 25%;
                 font-size: 30px;
                 overflow: hidden;
                 white-space: nowrap;

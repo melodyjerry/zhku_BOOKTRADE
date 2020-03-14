@@ -1,1 +1,8 @@
 $page-background: rgb(245, 245, 245);
+
+@mixin flexLayout ($flex: row, $justify: center, $align: center) {
+    display: flex;
+    flex-direction: $flex;
+    justify-content: $justify;
+    align-items: $align;
+}

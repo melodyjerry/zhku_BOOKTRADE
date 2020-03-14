@@ -1,0 +1,67 @@
+@import '../../styles/page.scss';
+@import "~taro-ui/dist/style/components/icon.scss";
+
+@mixin layout($flex: row, $justify: center, $align: center) {
+    display: flex;
+    flex-direction: $flex;
+    justify-content: $justify;
+    align-items: $align;
+}
+
+@mixin button($color) {
+    padding: 10px 20px;
+    border: 1px solid $color;
+    color: $color;
+    border-radius: 10px;
+    font-size: 25px;
+}
+.component {
+    background: $page-background;
+    width: 100%;
+    height: 200px;
+    margin: 20px 0;
+    @include layout($justify: space-around);
+    &-imageHolder {
+        width: 20%;
+        @include layout();
+    }
+    &-infoHolder {
+        width: 45%;
+        &-msg {
+            font-size: 20px;
+        }
+    }
+    &-agreeHolder {
+        width: 15%;
+        height: 70%;
+        @include layout($flex: column, $justify: space-between);
+        &-agree {
+            @include button(green)
+        }
+        &-disAgree {
+            @include button(red)
+        }
+    }
+    &-evaluatHolder {
+        width: 15%;
+        height: 70%;
+        @include layout();
+        &-evaluat {
+            @include button(brown)
+        }
+    }
+    &-stateHolder {
+        width: 15%;
+        height: 70%;
+        @include layout($flex: column, $justify: space-between);
+        &-gray {
+            @include button(gray)
+        }
+        &-green {
+            @include button(green)
+        }
+        &-red {
+            @include button(red)
+        }
+    }
+}

@@ -11,19 +11,23 @@ import {
     BookItemRow,
     BookItemColumn,
 } from '@components'
-
+import * as actions from '@actions/book'
+import { get } from '@utils/global_data'
 import { AtSearchBar, AtFab } from 'taro-ui'
 import './index.scss'
+import { connect } from "@tarojs/redux"
 
 const baseClass = 'page'
 
-export default class Home extends Component {
+@connect( state => state.book, { ...actions } )
+class Home extends Component {
 
     constructor(props) {
         super(props)
     }
     
     state = {
+        isSuperUser: false,
         seachValue: '',
         hotBookList: [],
         lastestBookList: [],
@@ -34,11 +38,17 @@ export default class Home extends Component {
      */
     componentWillMount() {
         this.loadHotBook()
-        this.loadLastestBook()
+        this.props.dispatchLoadMoreBook({ show_items: 0 })
     }
     
     config = {
-        navigationBarTitleText: '个人资料'
+        navigationBarTitleText: 'ZHKUCLOUD'
+    }
+    
+    componentDidShow() {
+        const isSuperUser = get('isSuperUser')
+        this.setState({ isSuperUser })
+        this.componentWillMount()    //重新加载页面
     }
 
     /**
@@ -54,18 +64,6 @@ export default class Home extends Component {
     }
     
     /**
-     * 加载最新书籍，写进action里
-     */
-    loadLastestBook = async () => {
-        const url = `https://www.shuaixiaoxiao.com/wechat-return/home/home_getBookInfo.php?show_items=0`
-        const response = await fetch({ url })
-        const { books_list } = response.data
-        this.setState({
-            lastestBookList: books_list
-        })
-    }
-
-    /**
      * 搜索框内容change
      * @param {*} value 
      */
@@ -74,6 +72,7 @@ export default class Home extends Component {
             seachValue: value
         })
     }
+
 
     /**
      * 刷新热门书籍列表方法，需要设置只能5秒内刷新一次
@@ -110,31 +109,35 @@ export default class Home extends Component {
                 }).catch(() => { })
             }
             case 'censor': {
-                return Taro.scanCode().then(res => {
-                    Taro.navigateTo({ url: `/pages/censor/index` })
-                }).catch(() => { })
+                return Taro.navigateTo({ url: `/pages/censor/index` })
             }
             default: {
-                console.log('def')
                 return
             }
         }
     }
 
     render() {
-        const { hotBookList, lastestBookList } = this.state
+        const { hotBookList, isSuperUser } = this.state
+        const { lastestBook } = this.props
         return(
             <View className={`${baseClass}`}>
                 <View className={`${baseClass}-flow`}>
-                    <AtFab onClick={this.onButtonClick.bind(this, { type: 'sub'} )}>
-                        <Text className='at-fab__icon at-icon at-icon-upload'></Text>
-                    </AtFab>
-                    <AtFab onClick={this.onButtonClick.bind(this, { type: 'get'} )}>
-                        <Text className='at-fab__icon at-icon at-icon-download'></Text>
-                    </AtFab>
-                    <AtFab onClick={this.onButtonClick.bind(this, { type:'censor'} )}>
-                        <Text className='at-fab__icon at-icon at-icon-bullet-list'></Text>
-                    </AtFab>
+                    {isSuperUser &&
+                        <View className={`${baseClass}-flow-censor`}>
+                            <AtFab onClick={this.onButtonClick.bind(this, { type:'censor'} )}>
+                                <Text className='at-fab__icon at-icon at-icon-bullet-list'></Text>
+                            </AtFab>
+                        </View>
+                    }
+                    <View className={`${baseClass}-flow-subget`}>
+                        <AtFab onClick={this.onButtonClick.bind(this, { type: 'sub'} )}>
+                            <Text className='at-fab__icon at-icon at-icon-upload'></Text>
+                        </AtFab>
+                        <AtFab onClick={this.onButtonClick.bind(this, { type: 'get'} )}>
+                            <Text className='at-fab__icon at-icon at-icon-download'></Text>
+                        </AtFab>
+                    </View>
                 </View>
                 <AtSearchBar
                   className={`${baseClass}-seachContainer`}
@@ -156,11 +159,12 @@ export default class Home extends Component {
                           displayMultipleItems={3}
                           indicatorDots
                         >
-                            {hotBookList.map((value) => {
-                                const { pic, book_name, author, price, isbn } = value
+                            {hotBookList.map((value, index) => {
+                                const { pic, book_name, author, price, isbn, fever } = value
                                 return(
-                                    <SwiperItem key={isbn}>
+                                    <SwiperItem key={index}>
                                         <BookItemRow
+                                          fever={fever}
                                           isbn={isbn}
                                           pic={pic}
                                           book_name={book_name}
@@ -177,11 +181,11 @@ export default class Home extends Component {
                       title='最新发布'
                       handler={this.handlerClickMoreLastest}
                     >
-                        {lastestBookList.map((value) => {
+                        {lastestBook && lastestBook.map((value, index) => {
                             const { pic, title, isbn, book_quantity, price } = value
                             return(
                                 <BookItemColumn 
-                                  key={isbn}
+                                  key={index}
                                   isbn={isbn}
                                   pic={pic}
                                   book_name={title}
@@ -196,3 +200,5 @@ export default class Home extends Component {
         )
     }
 }
+
+export default Home

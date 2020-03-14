@@ -13,7 +13,7 @@ export default class ButtomView extends Component {
     }
 
     render () {
-        const { originPrice, currentPrice, type } = this.props
+        const { originPrice, currentPrice, type, onSubmit } = this.props
         let bool = type === 'show' ? true : false
         let buttonValue = type === 'show' ? '只能通过扫码交易' : ( type === 'get' ? '取书' : '捐书')
         return(
@@ -24,7 +24,7 @@ export default class ButtomView extends Component {
                 </View>
                 <View className={`${baseClass}-button`}>
                     <View className={`${baseClass}-button-value`}>
-                        <AtButton disabled={bool} type='primary'>{buttonValue}</AtButton>
+                        <AtButton disabled={bool} type='primary' onClick={onSubmit}>{buttonValue}</AtButton>
                     </View>
                 </View>
             </View>

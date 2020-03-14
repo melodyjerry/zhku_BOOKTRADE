@@ -1,3 +1,6 @@
+@import "~taro-ui/dist/style/components/icon.scss";
+@import '../../styles/page.scss';
+
 .component {
     height: 100%;
     display: flex;
@@ -6,7 +9,7 @@
     align-items: center;
     &-image {
         padding: 2px;
-        width: 200px;
+        width: 190px;
     }
     &-info {
         &-name {
@@ -32,6 +35,10 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+        &-browse {
+            font-size: 20px;
+            @include flexLayout($justify: flex-start);
         }
     }
 }

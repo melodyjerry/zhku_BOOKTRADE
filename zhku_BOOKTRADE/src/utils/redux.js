@@ -16,7 +16,7 @@ import fetch from '@utils/request'
 export function createAction(options) {
     const { url, payload={}, method, fetchOptions, cb, type } = options
     // const data = get('openId')
-    const data = Taro.getStorageSync('openid')
+    const data = Taro.getStorageSync('openId')
     payload.openid = data || ''
     return dispatch => {
         return fetch({ url, payload, method, ...fetchOptions }).then(

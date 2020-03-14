@@ -1,3 +1,5 @@
+@import '../../styles/page.scss';
+
 .page {
     background: rgb(245, 245, 245);
 
@@ -6,10 +8,16 @@
         position: fixed;
         z-index: 999;
         bottom: 10px;
-        display: flex;
         width: 100%;
-        flex-direction: row;
-        justify-content: space-around;
+        @include flexLayout($flex: column);
+        &-censor {
+            @include flexLayout($justify: flex-end);
+            width: 100%;
+        }
+        &-subget {
+            @include flexLayout($justify: space-around);
+            width: 100%;
+        }
     }
     &-seachContainer {
         box-shadow: 0 0 10px 0 gray;

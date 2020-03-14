@@ -33,7 +33,7 @@ export default class BookComment extends Component {
                 <AtAccordion
                   open={this.state.open}
                   onClick={this.handleClick.bind(this)}
-                  title='评论'
+                  title={`评价(${data.length !== 0 ? data.length : 0})`}
                 >
                     {data.length !== 0 ? 
                     <View className={`${baseClass}-main`}>

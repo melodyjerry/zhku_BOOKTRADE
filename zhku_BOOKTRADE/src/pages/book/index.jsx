@@ -4,6 +4,8 @@ import * as actions from '@actions/book'
 import { connect } from '@tarojs/redux'
 import { AtAccordion } from 'taro-ui'
 import { BookInfo, BookComment } from '@components'
+import { API_ADD_CENSOR, API_USER_TAKE_BOOK } from '@constants/api'
+import fetch from '@utils/request'
 import { ButtomView } from './buttomView'
 import './index.scss'
 
@@ -25,28 +27,23 @@ class Book extends Component {
     }
 
 
-    /**
-     * 预加载，这个是要从别的页面跳转过来才会加载的
-     * @param {*} params 
-     */
-    async componentWillPreload(params) {
-        const { isbn, type='show' } = params
+    async componentDidMount() {
+        const { isbn, type='show' } = this.$router.params
         const payload = { isbn }
         await this.props.dispatchLoadBookInfo(payload)
         await this.props.dispatchLoadBookComment(payload)
+        const { bookInfo } = this.props
         this.setState({
             type: type,
-        })
-    }
-
-    async componentWillMount() {
-        const { bookInfo } = this.props
-        const { type } = this.state
-        this.setState({
             currentPrice: parseInt(bookInfo.price*( type === 'get' ? 0.7 : 0.6 )),
             originPrice: bookInfo.price,
         })
     }
+
+    config = {
+        navigationBarTitleText: 'BOOK'
+    }
+
 
     setValue (value) {
         this.setState({
@@ -57,22 +54,39 @@ class Book extends Component {
     /**
      * 捐书/取书按钮
      */
-    submit () {
-
+    submit = async () => {
+        const { bookInfo } = this.props
+        const { currentPrice } = this.state
+        const openid = Taro.getStorageSync('openId')
+        const payload = { isbn: bookInfo.isbn, title: bookInfo.title, credit: currentPrice, openid: openid }
+        const request = { 
+            url: type === 'sub' ? API_ADD_CENSOR : API_USER_TAKE_BOOK,
+            payload: payload 
+        }
+        try {
+            const response = await fetch(request)
+            if (response.data.ret === 0) {
+                Taro.showToast({ title: type === 'sub' ? '捐书成功' : '取书成功', icon: 'success' })
+                setTimeout(() => {
+                    Taro.navigateBack()
+                }, 1000)
+            }
+        } catch (err) {
+            Taro.showToast({ title: err, icon: 'none' })
+        }
     }
 
     render() {
-        const { bookInfo, bookComment, bookScore } = this.props
+        const { bookInfo, bookComment } = this.props
         const { currentPrice, originPrice, type } = this.state
         return(
             <View className={`${baseClass}`}>
                 <View className={`${baseClass}-section`}>
                     <BookInfo 
                       data={bookInfo}
+                      showQuantity={true}
                     />
                 </View>
-                {/* <View className={`${baseClass}-section`}>
-                </View> */}
                 <View className={`${baseClass}-section`}>
                     <AtAccordion
                       open={this.state.descOpen}
@@ -95,6 +109,7 @@ class Book extends Component {
                     originPrice={originPrice}
                     currentPrice={currentPrice}
                     type={type}
+                    onSubmit={this.submit}
                 />
             </View>
         )
