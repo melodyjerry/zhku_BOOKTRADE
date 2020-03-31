@@ -88,19 +88,18 @@ if __name__=='__main__':
     itemTemp=getMovieList("ml-100k/u.item") #获取电影列表
     fileTemp=readFile("ml-100k/u.data")     #读取文件
     user_dic,movie_dic=createDict(fileTemp)                        #创建字典
-    print(user_dic)
-    # user_id=66
-    # movieTemp=recommondation(user_id,user_dic,80)               #对电影排序
-    # rows=[]
-    # table=Texttable()                                              #创建表格并显示
-    # table.set_deco(Texttable.HEADER)
-    # table.set_cols_dtype(['t','f','a'])
-    # table.set_cols_align(["l","l","l"])
-    # rows.append(["user name","recommondation_movie","from userid"])
-    # for i in movieTemp:
-    #     rows.append([user_id,itemTemp[i[0]][0],""])
-    # table.add_rows(rows) 
-    # print(table.draw())
+    user_id=66
+    movieTemp=recommondation(user_id,user_dic,80)               #对电影排序
+    rows=[]
+    table=Texttable()                                              #创建表格并显示
+    table.set_deco(Texttable.HEADER)
+    table.set_cols_dtype(['t','f','a'])
+    table.set_cols_align(["l","l","l"])
+    rows.append(["user name","recommondation_movie","from userid"])
+    for i in movieTemp:
+        rows.append([user_id,itemTemp[i[0]][0],""])
+    table.add_rows(rows) 
+    print(table.draw())
         
     
 
