@@ -11,15 +11,21 @@ import {
     BookItemRow,
     BookItemColumn,
 } from '@components'
+import { API_GET_LASTEST_BOOK, API_GET_USER_DBINFO } from '@constants/api'
 import * as actions from '@actions/book'
-import { get } from '@utils/global_data'
-import { AtSearchBar, AtFab } from 'taro-ui'
+import { getUserOpenId, getUserInfo } from '@utils/user'
+import * as userActions from '@actions/user'
+import { superUser } from '@constants/superUser'
+import { get, set } from '@utils/global_data'
+import { shortid } from '@utils/methods'
+import { AtSearchBar, AtFab, AtButton } from 'taro-ui'
+import scan from '@assets/scan/scan.svg'
 import './index.scss'
 import { connect } from "@tarojs/redux"
 
 const baseClass = 'page'
 
-@connect( state => state.book, { ...actions } )
+@connect( state => {return {...state.book, ...state.user}}, { ...actions, ...userActions } )
 class Home extends Component {
 
     constructor(props) {
@@ -36,15 +42,25 @@ class Home extends Component {
     /**
      * 页面加载前执行
      */
-    componentWillMount() {
+    async componentWillMount() {
+        const { lastestBook, dispatchLoadMoreBook } = this.props
         this.loadHotBook()
-        this.props.dispatchLoadMoreBook({ show_items: 0 })
+        // dispatchLoadMoreBook({ show_items: 0 })
+        const request = {
+            url: API_GET_LASTEST_BOOK,
+        }
+        try {
+            const response = await fetch(request)
+            this.setState({
+                lastestBookList: response.data.books_list
+            })
+        } catch(err) { console.log(err) }
     }
     
     config = {
         navigationBarTitleText: 'ZHKUCLOUD'
     }
-    
+
     componentDidShow() {
         const isSuperUser = get('isSuperUser')
         this.setState({ isSuperUser })
@@ -95,8 +111,43 @@ class Home extends Component {
         Taro.navigateTo({url: `/pages/seach/index?seachValue=${this.state.seachValue}`})
     }
 
+    async dispatchLogin (type, e) {
+        if (e.detail.errMsg === 'getUserInfo:ok') {
+            await this.logIn() 
+            this.onButtonClick({ type: type })
+        } else { 
+            Taro.showToast({ title: '必须登录后才能交易', icon: 'none' })
+        }
+    }
+
+    // 这里的登录事件要改 
+    logIn = async () => {
+        const { dispatchLogIn } = this.props
+        const storage = await getUserOpenId()
+        const userInfo = await getUserInfo()
+        dispatchLogIn()                          // 修改登录状态
+        superUser.map((value, index) => {
+            if (value === storage.data.openid) {
+                set('isSuperUser', true)
+            }
+        })
+        const request = {
+            url: API_GET_USER_DBINFO,
+            payload: { openid: storage.data.openid }
+        }
+        const response = await fetch(request)
+        set('openId', storage.data.openid)
+        set('userInfo', userInfo)
+        set('userDBInfo', response.data.userInfo)
+    }
+
     onButtonClick (payload) {
         const { type } = payload
+        const userDBInfo = get('userDBInfo')
+        if (Number(userDBInfo[0].state) === 1) {
+            Taro.showToast({  title: '您已被禁止交易,请联系管理员解封', icon: 'none', duration: 4000})
+            return
+        }
         switch(type) {
             case 'sub': {
                 return Taro.scanCode().then(res => {
@@ -118,24 +169,43 @@ class Home extends Component {
     }
 
     render() {
-        const { hotBookList, isSuperUser } = this.state
-        const { lastestBook } = this.props
+        const { hotBookList, isSuperUser, lastestBookList } = this.state
         return(
             <View className={`${baseClass}`}>
                 <View className={`${baseClass}-flow`}>
                     {isSuperUser &&
                         <View className={`${baseClass}-flow-censor`}>
-                            <AtFab onClick={this.onButtonClick.bind(this, { type:'censor'} )}>
+                            <AtFab className='CensorFab' onClick={this.onButtonClick.bind(this, { type:'censor'} )}>
                                 <Text className='at-fab__icon at-icon at-icon-bullet-list'></Text>
                             </AtFab>
                         </View>
                     }
                     <View className={`${baseClass}-flow-subget`}>
-                        <AtFab onClick={this.onButtonClick.bind(this, { type: 'sub'} )}>
-                            <Text className='at-fab__icon at-icon at-icon-upload'></Text>
+                        <AtFab 
+                            // onClick={this.onButtonClick.bind(this, { type: 'sub'} )}
+                        >
+                            {/* <Text className='at-fab__icon at-icon at-icon-upload'></Text> */}
+                            <AtButton openType='getUserInfo' onGetUserInfo={this.dispatchLogin.bind(this, 'sub')}>
+                                <View className={`${baseClass}-flow-subget-value`}>
+                                    <Image src={scan} className={`${baseClass}-flow-subget-icon`} />
+                                    <Text>
+                                        捐书
+                                    </Text>
+                                </View>
+                            </AtButton>
                         </AtFab>
-                        <AtFab onClick={this.onButtonClick.bind(this, { type: 'get'} )}>
-                            <Text className='at-fab__icon at-icon at-icon-download'></Text>
+                        <AtFab 
+                            // onClick={this.onButtonClick.bind(this, { type: 'get'} )}
+                        >
+                            {/* <Text className='at-fab__icon at-icon at-icon-download'></Text> */}
+                            <AtButton openType='getUserInfo' onGetUserInfo={this.dispatchLogin.bind(this, 'get')}>
+                                <View className={`${baseClass}-flow-subget-value`}>
+                                    <Image src={scan} className={`${baseClass}-flow-subget-icon`} />
+                                    <Text>
+                                        取书
+                                    </Text>
+                                </View>
+                            </AtButton>
                         </AtFab>
                     </View>
                 </View>
@@ -162,7 +232,7 @@ class Home extends Component {
                             {hotBookList.map((value, index) => {
                                 const { pic, book_name, author, price, isbn, fever } = value
                                 return(
-                                    <SwiperItem key={index}>
+                                    <SwiperItem key={shortid(index)}>
                                         <BookItemRow
                                           fever={fever}
                                           isbn={isbn}
@@ -181,11 +251,11 @@ class Home extends Component {
                       title='最新发布'
                       handler={this.handlerClickMoreLastest}
                     >
-                        {lastestBook && lastestBook.map((value, index) => {
+                        {lastestBookList && lastestBookList.map((value, index) => {
                             const { pic, title, isbn, book_quantity, price } = value
                             return(
                                 <BookItemColumn 
-                                  key={index}
+                                  key={shortid(index)}
                                   isbn={isbn}
                                   pic={pic}
                                   book_name={title}

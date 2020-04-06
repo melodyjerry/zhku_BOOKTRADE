@@ -37,7 +37,7 @@ class UserCensor extends Component {
         const { type } = this.$router.params
         const { dispatchLoadUserCensor } = this.props
         await dispatchLoadUserCensor()
-        this.setState({ currentTab: type })
+        this.setState({ currentTab: Number(type) })
     }
 
     config = {

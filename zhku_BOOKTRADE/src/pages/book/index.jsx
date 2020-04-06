@@ -54,11 +54,18 @@ class Book extends Component {
     /**
      * 捐书/取书按钮
      */
-    submit = async () => {
+    submit = async (templateId) => {
+        
         const { bookInfo } = this.props
-        const { currentPrice } = this.state
+        const { currentPrice, type } = this.state
         const openid = Taro.getStorageSync('openId')
-        const payload = { isbn: bookInfo.isbn, title: bookInfo.title, credit: currentPrice, openid: openid }
+        const payload = { 
+            isbn: bookInfo.isbn, 
+            title: bookInfo.title, 
+            credit: currentPrice, 
+            openid: openid, 
+            templateId: templateId 
+        }
         const request = { 
             url: type === 'sub' ? API_ADD_CENSOR : API_USER_TAKE_BOOK,
             payload: payload 
@@ -105,7 +112,6 @@ class Book extends Component {
                 </View>
                 <View className={`${baseClass}-end`}>--end--</View>
                 <ButtomView 
-                    submit={this.submit.bind(this)}
                     originPrice={originPrice}
                     currentPrice={currentPrice}
                     type={type}

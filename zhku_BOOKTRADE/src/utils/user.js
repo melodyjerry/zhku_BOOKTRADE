@@ -24,7 +24,6 @@ export async function getUserInfo () {
     try {
         const scope = await Taro.getSetting()  //获得权限
         const { authSetting } = scope
-
         // 没有授权则去授权
         let msg = {}
         if (!authSetting["scope.userInfo"]) { msg = await Taro.authorize({scope: 'scope.userInfo'}) }

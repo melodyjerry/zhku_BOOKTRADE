@@ -2,8 +2,10 @@ import Taro, { Component } from "@tarojs/taro"
 import { View } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
 import { censorArr, serverArr } from '@constants/user'
-import { AtCard, AtAvatar, AtGrid, AtToast } from 'taro-ui'
+import { API_GET_USER_DBINFO } from '@constants/api'
+import { AtCard, AtAvatar, AtGrid, AtToast, AtButton } from 'taro-ui'
 import { superUser } from '@constants/superUser'
+import fetch from '@utils/request'
 import * as actions from '@actions/user'
 import { get, set } from '@utils/global_data'
 import { getUserOpenId, getUserInfo, getUserPoint } from '@utils/user'
@@ -24,6 +26,7 @@ class User extends Component {
         avatarUrl: '',
         credit: '--',
         loadingOpen: false,
+        userState: -1,
     }
 
     componentDidMount() {
@@ -56,15 +59,23 @@ class User extends Component {
             const storageCredit = await getUserPoint()
             const { nickName, avatarUrl } = storageUserInfo.data.userInfo
             const { credit } = storageCredit.data
+            const userState = Number((get('userDBInfo'))[0].state)
             state.nickName = nickName
             state.avatarUrl = avatarUrl
             state.credit = credit
+            state.userState = userState
         } else {
             state.nickName = '未登录'
             state.avatarUrl = '',
             state.credit = '--'
         }
         this.setState(state)
+    }
+
+    dispatchLogin = (e) => {
+        if(e.target.errMsg === 'getUserInfo:ok') {
+            this.logIn()
+        } else { Taro.showToast({ title: '需要授权才能登陆哦', icon: 'none' }) }
     }
 
     /**
@@ -81,7 +92,13 @@ class User extends Component {
                 set('isSuperUser', true)
             }
         })
+        const request = {
+            url: API_GET_USER_DBINFO,
+            payload: { openid: storage.data.openid }
+        }
+        const response = await fetch(request)
         set('userInfo', userInfo)
+        set('userDBInfo', response.data.userInfo)
         Taro.setStorageSync('openId', storage.data.openid)
         Taro.setStorageSync('userInfo', userInfo)
         this.applyData()  // 渲染数据
@@ -134,7 +151,8 @@ class User extends Component {
                     </View>
                     <View className={`${baseClass}-userInfo-action`}>
                         {!isLogin ? 
-                        <View onClick={this.logIn}>登录/注册</View> : 
+                        <View><AtButton openType='getUserInfo' onGetUserInfo={this.dispatchLogin}>
+                            登录/注册</AtButton></View> : 
                         <View onClick={this.logOut}>登出</View>}
                     </View>
                 </View>
@@ -142,7 +160,7 @@ class User extends Component {
                     <AtCard title='我的资源'>
                         <View className={`${baseClass}-userAssets-row`}>
                             <View className={`${baseClass}-userAssets-row-left`}>剩余积分</View>
-                            <View className={`${baseClass}-userAssets-row-right`}>{this.state.credit}</View>
+                            <View className={`${baseClass}-userAssets-row-right`}>{this.state.credit}{this.state.userState === 1 ? '(冻结)' : ''}</View>
                         </View>
                     </AtCard>
                 </View>

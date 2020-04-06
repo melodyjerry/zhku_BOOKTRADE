@@ -38,13 +38,15 @@ class Censor extends Component {
                 censorid: params.Censor_id,
                 title: params.title,
                 pic: params.pic,
+                credit: Number(params.credit),
+                reson: params.reson,
             }
         }
-        console.log(request)
         try {
             const response = await fetch(request)
+            console.log(response)
             if(response.data.ret === 0) Taro.showToast({ title: '操作成功', icon: 'success' })
-            else if (response.data.ret === 1) Taro.showToast({ title: '操作成功', icon: 'success' })
+            else if (response.data.ret === 1) Taro.showToast({ title: '操作失败', icon: 'none' })
             this.componentDidMount()
         } catch (err) {
             Taro.showToast({ title: err, icon: 'none' })
@@ -56,13 +58,14 @@ class Censor extends Component {
         return(
             <View className={`${baseClass}`}>
                 {(Object.keys(censorList)).length !== 0 && censorList.map((value, index) => {
-                        const { Censor_id, Credit, OpenID, add_time, pic, title, isbn, price } = value
+                        const { Censor_id, Credit, credit, OpenID, add_time, pic, title, isbn, price, state } = value
                             return(
                                 <CensorItem
                                     isbn={isbn}
                                     Censor_id={Censor_id}
                                     price={price}
                                     Credit={Credit}
+                                    credit={credit}
                                     OpenID={OpenID}
                                     add_time={add_time}
                                     pic={pic}
@@ -70,6 +73,7 @@ class Censor extends Component {
                                     censor={true}
                                     beEvaluated={false}
                                     dealCensor={this.dealCensor}
+                                    userState={state}
                                 />
                             )
                     })}

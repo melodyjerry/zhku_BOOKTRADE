@@ -3,9 +3,13 @@ export const host = HOST
 // USER
 export const API_GET_USER_OPENID = `${host}/wechat-return/UserInteract/wx_openid.php`
 export const API_GET_USER_POINT = `${host}/wechat-return/UserInteract/personal_getPoint.php`
+export const API_GET_USER_RECORD = `${host}/wechat-return/UserInteract/getUserRecord.php`
+export const API_UPDATE_USER_STATE = `${host}/wechat-return/UserInteract/updateUserState.php`
+export const API_GET_USER_DBINFO = `${host}/wechat-return/UserInteract/getUserInfo.php`
 
 // BOOK
 export const API_GET_BOOK_INFO_BY_ISBN = `${host}/wechat-return/code_getBookInfo.php`
+export const API_GET_LASTEST_BOOK = `${host}/wechat-return/home_getLastestBook.php`
 export const API_GET_BOOK_COMMENT_BY_ISBN = `${host}/wechat-return/code_getBookComment.php`
 export const API_GET_BOOK_INFO_BY_KEY = `${host}/wechat-return/search/search_getBookInfo.php`
 export const API_USER_TAKE_BOOK = `${host}/wechat-return/UserInteract/home_take_bookFlist.php`

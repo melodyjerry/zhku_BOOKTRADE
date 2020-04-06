@@ -8,6 +8,9 @@
 @mixin leave {
     margin: 20px;
 }
+.at-button {
+    border: 0px solid black;
+}
 .page {
     padding: 20px 30px;
     background: $page-background;
