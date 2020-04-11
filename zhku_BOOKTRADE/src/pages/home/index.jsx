@@ -39,6 +39,12 @@ class Home extends Component {
         lastestBookList: [],
     }
     
+    shouldComponentUpdate(nextState, nextProps) {
+        const { seachValue } = this.state
+        if (seachValue !== nextState.seachValue) return true
+        return false
+    }
+
     /**
      * 页面加载前执行
      */
@@ -84,9 +90,8 @@ class Home extends Component {
      * @param {*} value 
      */
     seachValueOnChange (value) {
-        this.setState({
-            seachValue: value
-        })
+        this.setState({ seachValue: value.detail.value })
+        set('key', value.detail.value)
     }
 
 
@@ -107,8 +112,9 @@ class Home extends Component {
     /**
      * 搜索按钮点击事件，跳转到搜索页面
      */
-    seachOnActionClick () {
-        Taro.navigateTo({url: `/pages/seach/index?seachValue=${this.state.seachValue}`})
+    seachOnActionClick = async (e) => {
+        const key = get('key')
+        Taro.navigateTo({url: `/pages/seach/index?seachValue=${key}`})
     }
 
     async dispatchLogin (type, e) {
@@ -213,8 +219,8 @@ class Home extends Component {
                   className={`${baseClass}-seachContainer`}
                   fixed
                   value={this.state.seachValue}
-                  onChange={this.seachValueOnChange.bind(this)}
-                  onActionClick={this.seachOnActionClick.bind(this)}
+                  onBlur={this.seachValueOnChange.bind(this)}
+                  onActionClick={e => { this.seachOnActionClick(e) }}
                 />
                 <View className={`${baseClass}-container`}>
                     <CategoryNavigate />

@@ -3,7 +3,7 @@ const globalData = {
   isSuperUser: false,
 }
 
-export const errURL = `https://${HOST}/assets/public/error.png`
+export const errURL = `https://www.shuaixiaoxiao.com/assets/public/error.png`
 
 export function set (key, val) {
   globalData[key] = val

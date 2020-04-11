@@ -1,9 +1,9 @@
-import Taro, { Component } from "@tarojs/taro"
+import Taro, { Component, PureComponent } from "@tarojs/taro"
 import { View } from "@tarojs/components"
 import './index.scss'
 
 const baseClass = 'component'
-export default class ShowTypeOne extends Component {
+export default class ShowTypeOne extends PureComponent {
 
     // static defaultProps = {
     //     extra: '更多',

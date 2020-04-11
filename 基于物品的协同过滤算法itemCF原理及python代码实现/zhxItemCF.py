@@ -11,10 +11,10 @@ from operator import itemgetter
 def readRecordFromDateBase():
     connection = pymysql.connect(
         host='119.29.139.239',              # IP，MySQL数据库服务器IP地址
-        port=888,                           # 端口，默认3306，可以不输入
+        port=3306,                           # 端口，默认3306，可以不输入
         user='zhku16_system',               # 数据库用户名
         password='FiF3i74ihEkC2njS',        # 数据库登录密码
-        database='zhku_book_trade_system',  # 要连接的数据库
+        database='zhku16_system',  # 要连接的数据库
         charset='utf8'                      # 字符集，注意不是'utf-8'
     )
     cursor = connection.cursor()            # 游标
@@ -22,7 +22,7 @@ def readRecordFromDateBase():
     cursor.execute(sql)                     # 使用游标执行SQL语句
     
     data = cursor.fetchone()                # 遍历单条数据
-    print("数据库版本：%s" % data)
+    print(data)
 
     connection.close()                      # 关闭数据库
 
@@ -162,4 +162,4 @@ if __name__=='__main__':
         rows.append([user_id, i[0], i[1]])
     table.add_rows(rows) 
     print(table.draw())
-    # readRecordFromDateBase()
+    readRecordFromDateBase()

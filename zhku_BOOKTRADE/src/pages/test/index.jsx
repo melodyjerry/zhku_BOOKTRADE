@@ -59,6 +59,9 @@ class Index extends Component {
           <Button
               onClick={this.logOut.bind(this)}
           >登出</Button>
+          <View>
+            <View>拖拽组件</View>
+          </View>
       </View>
     )
   }

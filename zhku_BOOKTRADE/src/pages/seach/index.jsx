@@ -6,6 +6,7 @@ import * as actions from '@actions/book'
 import { connect } from "@tarojs/redux"
 
 import './index.scss'
+import { set, get } from "@utils/global_data"
 
 @connect(state => state.book, { ...actions })
 class Seach extends Component {
@@ -20,14 +21,15 @@ class Seach extends Component {
         isOpened: false,
     }
 
+
     async componentWillPreload(params) {
         const { seachValue } = params
-        this.setState({ seachValue, seachValue: false })
+        this.setState({ seachValue })
         await this.props.dispatchSearchBook({ keyword: seachValue, currentType: 1 })
     }
 
     config = {
-        navigationBarTitleText: 'MORE'
+        navigationBarTitleText: 'SEACH'
     }
 
     async handleTabClick(value) {
@@ -38,14 +40,17 @@ class Seach extends Component {
     }
 
     seachValueOnChange (value) {
-        this.setState({ seachValue: value, isOpened: false })
+        set('key', value.detail.value)
+        // this.setState({ isOpened: false })
     }
 
     seachOnActionClick() {
-        const { current, seachValue } = this.state
+        const { current } = this.state
+        const seachValue = get('key')
         if ((Object.keys(seachValue)).length === 0) return Taro.showToast({ title: '搜索字符不能为空', icon: 'none' })
         this.setState({ isOpened: true }, () => {
             this.props.dispatchSearchBook({ keyword: seachValue, currentType: parseInt(current) })
+            this.setState({ isOpened: false })
         })
     }
 
@@ -55,13 +60,14 @@ class Seach extends Component {
         return(
             <View>
                 <AtSearchBar 
-                  fixed
                   value={seachValue}
-                  onChange={this.seachValueOnChange.bind(this)}
+                  onBlur={this.seachValueOnChange.bind(this)}
                   onActionClick={this.seachOnActionClick.bind(this)}
                 />
                 <View className='page'>
-                    <AtToast isOpened text="加载中" status='loading' duration={1000} isOpened={isOpened}></AtToast>
+                    {isOpened && 
+                        <AtToast isOpened text="加载中" status='loading' isOpened={isOpened}></AtToast>
+                    }
                     <AtTabBar
                         tabList={[
                         { title: '综合' },
@@ -72,11 +78,12 @@ class Seach extends Component {
                         onClick={this.handleTabClick.bind(this)}
                         current={this.state.current}
                     />
-                    {(Object.keys(seachBook)).length !== 0 && seachBook.map((value, index) => {
+                    {(!isOpened && seachBook && Object.keys(seachBook)).length !== 0 && seachBook.map((value, index) => {
                         const { pic, book_name, book_price, isbn, book_quantity } = value
                             return(
-                                <BookItemColumn 
+                                <BookItemColumn
                                     key={isbn}
+                                    seachKey={get('key')}
                                     isbn={isbn}
                                     pic={pic}
                                     book_name={book_name}
