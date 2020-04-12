@@ -1,6 +1,7 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View, Button, Text } from '@tarojs/components'
 import { connect } from '@tarojs/redux'
+import { DragDropContext , Draggable, Droppable } from 'react-beautiful-dnd'
 import { add, minus, asyncAdd } from '@actions/counter'
 import * as actions from '@actions/user'
 
@@ -39,6 +40,18 @@ class Index extends Component {
     const { dispatchLogOut } = this.props
     dispatchLogOut()
   }
+
+  onDragStart = () => {
+    console.log('开始拖拽')
+  }
+
+  onDragEnd = () => {
+    console.log('结束拖拽')
+  }
+
+  onDragUpdate = () => {
+    console.log('正在拖拽')
+  }
   
   render () {
     const { isLogin } = this.props
@@ -61,6 +74,13 @@ class Index extends Component {
           >登出</Button>
           <View>
             <View>拖拽组件</View>
+            <DragDropContext
+              onDragStart={this.onDragStart}
+              onDragEnd={this.onDragEnd}
+              onDragUpdate={this.onDragUpdate}
+            >
+              <View>Hello World</View>
+            </DragDropContext>
           </View>
       </View>
     )
