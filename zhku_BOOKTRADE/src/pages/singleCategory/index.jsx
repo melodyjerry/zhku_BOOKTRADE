@@ -2,7 +2,10 @@ import Taro, { Component } from "@tarojs/taro"
 import { View } from '@tarojs/components'
 import { BookItemColumn, NullData } from '@components/'
 import * as actions from '@actions/category'
-import { AtTabBar } from 'taro-ui'
+import { get, set } from '@utils/global_data'
+
+import { AtSearchBar, AtTabBar } from 'taro-ui'
+
 
 
 import './index.scss'
@@ -70,10 +73,33 @@ class SingleCategory extends Component {
         return <NullData />
     }
 
+    /**
+     * 搜索框内容change
+     * @param {*} value 
+     */
+    seachValueOnChange (value) {
+        set('key', value.detail.value)
+    }
+
+    /**
+     * 搜索按钮点击事件，跳转到搜索页面
+     */
+    seachOnActionClick = async (e) => {
+        const key = get('key')
+        Taro.navigateTo({url: `/pages/seach/index?seachValue=${key}`})
+    }
+
     render() {
         const { singleCategoryInfo } = this.props
         return(
             <View className={`${baseClass}`}>
+                <AtSearchBar
+                  className={`${baseClass}-seachContainer`}
+                  fixed
+                  value={this.state.seachValue}
+                  onBlur={this.seachValueOnChange.bind(this)}
+                  onActionClick={e => { this.seachOnActionClick(e) }}
+                />
                 <AtTabBar
                     tabList={[
                     { title: '综合' },

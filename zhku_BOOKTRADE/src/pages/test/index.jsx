@@ -74,13 +74,13 @@ class Index extends Component {
           >登出</Button>
           <View>
             <View>拖拽组件</View>
-            <DragDropContext
+            {/* <DragDropContext
               onDragStart={this.onDragStart}
               onDragEnd={this.onDragEnd}
               onDragUpdate={this.onDragUpdate}
             >
               <View>Hello World</View>
-            </DragDropContext>
+            </DragDropContext> */}
           </View>
       </View>
     )

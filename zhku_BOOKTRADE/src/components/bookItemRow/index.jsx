@@ -1,8 +1,10 @@
 import Taro, { Component } from "@tarojs/taro"
+import { AtButton } from 'taro-ui'
 import { View, Image } from '@tarojs/components'
 import './index.scss'
 
 const baseClass = 'component'
+
 export default class BookItemRow extends Component {
 
     constructor(props) {
@@ -13,22 +15,25 @@ export default class BookItemRow extends Component {
         
     }
 
-    onClick(isbn) {
+    jumpToBook(isbn) {
         Taro.navigateTo({ url: `/pages/book/index?isbn=${isbn}&type=show` })
+    }
+
+    dispatchLogin = async (isbn, e) => {
+        console.log(isbn)
     }
 
     render() {
         const { pic, book_name, author, price, isbn, fever } = this.props
         return(
-            
             <View 
-              className={baseClass} 
-              onClick={this.onClick.bind(this, isbn)}
+            className={baseClass} 
+              onClick={this.jumpToBook.bind(this, isbn)}
             >
                 <Image 
-                  className={`${baseClass}-image`} 
-                  src={pic}
-                  mode='widthFix'
+                className={`${baseClass}-image`} 
+                src={pic}
+                mode='widthFix'
                 ></Image>
                 <View className={`${baseClass}-info`}>
                     <View className={`${baseClass}-info-name`}>{book_name}</View>

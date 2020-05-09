@@ -9,6 +9,7 @@ export const API_GET_USER_DBINFO = `${host}/wechat-return/UserInteract/getUserIn
 
 // BOOK
 export const API_GET_BOOK_INFO_BY_ISBN = `${host}/wechat-return/code_getBookInfo.php`
+export const API_GET_BOOKS_INFO_BY_ISBN = `${host}/wechat-return/code_getBooksInfo.php`
 export const API_GET_LASTEST_BOOK = `${host}/wechat-return/home_getLastestBook.php`
 export const API_GET_BOOK_COMMENT_BY_ISBN = `${host}/wechat-return/code_getBookComment.php`
 export const API_GET_BOOK_INFO_BY_KEY = `${host}/wechat-return/search/search_getBookInfo.php`
@@ -16,6 +17,7 @@ export const API_USER_TAKE_BOOK = `${host}/wechat-return/UserInteract/home_take_
 
 // HOME
 export const API_GET_MORE_LASTEST_BOOK = `${host}/wechat-return/home/home_getBookInfo.php`
+export const API_GET_HOT_BOOK = `${host}/wechat-return/home/home_getHotBook.php`
 
 // CATEGORY
 export const API_GET_All_CATEGORY_INFO = `${host}/wechat-return/category/category_getAllCategory.php`

@@ -1,5 +1,6 @@
 import Taro, { Component, PureComponent } from "@tarojs/taro"
 import { View, Image, Label } from '@tarojs/components'
+import { Loading } from '@components/'
 import { errURL } from '@utils/global_data'
 import './index.scss'
 
@@ -41,7 +42,7 @@ export default class BookItemColumn extends PureComponent {
             <View 
               className={baseClass}
               onClick={this.onClick.bind(this, Isbn)}
-            >
+            >   
                 {Pic && 
                     <Image className={`${baseClass}-image`} src={Pic || errURL} mode='widthFix' />
                 }

@@ -18,7 +18,6 @@ class Seach extends Component {
     state = {
         current: 1,
         seachValue: '',
-        isOpened: false,
     }
 
 
@@ -33,30 +32,31 @@ class Seach extends Component {
     }
 
     async handleTabClick(value) {
+        Taro.showLoading({ title: '加载中' })
         if (value === 0 || value === 2) return Taro.showToast({ title: '暂不支持', icon: 'none' })
-        this.setState({ current: value, isOpened: true }, () => {
-            this.props.dispatchSearchBook({ keyword: this.state.seachValue, currentType: parseInt(value) })
-        })
+        setTimeout(() => {
+            this.setState({ current: value }, () => {
+                this.props.dispatchSearchBook({ keyword: this.state.seachValue, currentType: parseInt(value) })
+            })
+        }, 2000)
     }
 
     seachValueOnChange (value) {
         set('key', value.detail.value)
-        // this.setState({ isOpened: false })
     }
 
     seachOnActionClick() {
         const { current } = this.state
         const seachValue = get('key')
         if ((Object.keys(seachValue)).length === 0) return Taro.showToast({ title: '搜索字符不能为空', icon: 'none' })
-        this.setState({ isOpened: true }, () => {
+        setTimeout(() => {
             this.props.dispatchSearchBook({ keyword: seachValue, currentType: parseInt(current) })
-            this.setState({ isOpened: false })
-        })
+        }, 2000)
     }
 
     render() {
         const { seachBook } = this.props
-        const { seachValue, isOpened } = this.state
+        const { seachValue } = this.state
         return(
             <View>
                 <AtSearchBar 
@@ -65,9 +65,6 @@ class Seach extends Component {
                   onActionClick={this.seachOnActionClick.bind(this)}
                 />
                 <View className='page'>
-                    {isOpened && 
-                        <AtToast isOpened text="加载中" status='loading' isOpened={isOpened}></AtToast>
-                    }
                     <AtTabBar
                         tabList={[
                         { title: '综合' },
@@ -78,7 +75,7 @@ class Seach extends Component {
                         onClick={this.handleTabClick.bind(this)}
                         current={this.state.current}
                     />
-                    {(!isOpened && seachBook && Object.keys(seachBook)).length !== 0 && seachBook.map((value, index) => {
+                    {seachBook.length !== 0 && seachBook.map((value, index) => {
                         const { pic, book_name, book_price, isbn, book_quantity } = value
                             return(
                                 <BookItemColumn
@@ -92,7 +89,7 @@ class Seach extends Component {
                                 />
                             )
                     })}
-                    {(Object.keys(seachBook)).length === 0 && <NullData />}
+                    {seachBook.length === 0 && <NullData />}
                 </View>
             </View>
         )

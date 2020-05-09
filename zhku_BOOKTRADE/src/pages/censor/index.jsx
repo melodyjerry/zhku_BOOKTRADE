@@ -27,6 +27,7 @@ class Censor extends Component {
     }
 
     dealCensor = async (params) => {
+        Taro.showLoading({ title: '操作中' })
         const { action } = params
         let request = {
             url: API_DEAL_CENSOR,
@@ -44,11 +45,12 @@ class Censor extends Component {
         }
         try {
             const response = await fetch(request)
-            console.log(response)
+            Taro.hideLoading()
             if(response.data.ret === 0) Taro.showToast({ title: '操作成功', icon: 'success' })
             else if (response.data.ret === 1) Taro.showToast({ title: '操作失败', icon: 'none' })
             this.componentDidMount()
         } catch (err) {
+            Taro.hideLoading()
             Taro.showToast({ title: err, icon: 'none' })
         }
     }

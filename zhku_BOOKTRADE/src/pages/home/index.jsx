@@ -11,10 +11,11 @@ import {
     BookItemRow,
     BookItemColumn,
 } from '@components'
-import { API_GET_LASTEST_BOOK, API_GET_USER_DBINFO } from '@constants/api'
+import { API_GET_LASTEST_BOOK, API_GET_USER_DBINFO, API_GET_HOT_BOOK } from '@constants/api'
 import * as actions from '@actions/book'
 import { getUserOpenId, getUserInfo } from '@utils/user'
 import * as userActions from '@actions/user'
+import * as categoryActions from '@actions/category'
 import { superUser } from '@constants/superUser'
 import { get, set } from '@utils/global_data'
 import { shortid } from '@utils/methods'
@@ -25,7 +26,7 @@ import { connect } from "@tarojs/redux"
 
 const baseClass = 'page'
 
-@connect( state => {return {...state.book, ...state.user}}, { ...actions, ...userActions } )
+@connect( state => {return {...state.book, ...state.user, ...state.category}}, { ...actions, ...userActions, ...categoryActions } )
 class Home extends Component {
 
     constructor(props) {
@@ -39,17 +40,11 @@ class Home extends Component {
         lastestBookList: [],
     }
     
-    shouldComponentUpdate(nextState, nextProps) {
-        const { seachValue } = this.state
-        if (seachValue !== nextState.seachValue) return true
-        return false
-    }
-
     /**
      * 页面加载前执行
      */
     async componentWillMount() {
-        const { lastestBook, dispatchLoadMoreBook } = this.props
+        const { lastestBook, dispatchLoadMoreBook, dispatchLoadAllCategoryInfo } = this.props
         this.loadHotBook()
         // dispatchLoadMoreBook({ show_items: 0 })
         const request = {
@@ -57,6 +52,7 @@ class Home extends Component {
         }
         try {
             const response = await fetch(request)
+            await dispatchLoadAllCategoryInfo()
             this.setState({
                 lastestBookList: response.data.books_list
             })
@@ -77,8 +73,10 @@ class Home extends Component {
      * 加载热门书籍，写进action里面
      */
     loadHotBook = async () => {
-        const url = `https://www.shuaixiaoxiao.com/wechat-return/home/home_getHotBook.php`
+        Taro.showLoading({ title: '加载中' })
+        const url = API_GET_HOT_BOOK
         const response = await fetch({ url })
+        Taro.hideLoading()
         const { books_info } = response.data
         this.setState({
             hotBookList: books_info
@@ -90,7 +88,6 @@ class Home extends Component {
      * @param {*} value 
      */
     seachValueOnChange (value) {
-        this.setState({ seachValue: value.detail.value })
         set('key', value.detail.value)
     }
 
@@ -176,6 +173,7 @@ class Home extends Component {
 
     render() {
         const { hotBookList, isSuperUser, lastestBookList } = this.state
+        const { allCategoryInfo } = this.props
         return(
             <View className={`${baseClass}`}>
                 <View className={`${baseClass}-flow`}>
@@ -190,7 +188,6 @@ class Home extends Component {
                         <AtFab 
                             // onClick={this.onButtonClick.bind(this, { type: 'sub'} )}
                         >
-                            {/* <Text className='at-fab__icon at-icon at-icon-upload'></Text> */}
                             <AtButton openType='getUserInfo' onGetUserInfo={this.dispatchLogin.bind(this, 'sub')}>
                                 <View className={`${baseClass}-flow-subget-value`}>
                                     <Image src={scan} className={`${baseClass}-flow-subget-icon`} />
@@ -203,7 +200,6 @@ class Home extends Component {
                         <AtFab 
                             // onClick={this.onButtonClick.bind(this, { type: 'get'} )}
                         >
-                            {/* <Text className='at-fab__icon at-icon at-icon-download'></Text> */}
                             <AtButton openType='getUserInfo' onGetUserInfo={this.dispatchLogin.bind(this, 'get')}>
                                 <View className={`${baseClass}-flow-subget-value`}>
                                     <Image src={scan} className={`${baseClass}-flow-subget-icon`} />
@@ -223,7 +219,9 @@ class Home extends Component {
                   onActionClick={e => { this.seachOnActionClick(e) }}
                 />
                 <View className={`${baseClass}-container`}>
-                    <CategoryNavigate />
+                    <CategoryNavigate
+                        allCategoryInfo={allCategoryInfo}
+                    />
                     <ShowTypeOne
                       extra='换一批'
                       title='热门书籍'

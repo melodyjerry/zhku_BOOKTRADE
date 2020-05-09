@@ -2,13 +2,15 @@
 import math
 import pymysql
 import sys
-from texttable import Texttable
+import json
+# from texttable import Texttable
 from collections import defaultdict
 #from Wtemp import *
 from operator import itemgetter
 
 # 读取数据库中评分记录
 def readRecordFromDateBase():
+    rates=[]
     connection = pymysql.connect(
         host='119.29.139.239',              # IP，MySQL数据库服务器IP地址
         port=3306,                           # 端口，默认3306，可以不输入
@@ -18,13 +20,20 @@ def readRecordFromDateBase():
         charset='utf8'                      # 字符集，注意不是'utf-8'
     )
     cursor = connection.cursor()            # 游标
-    sql = 'SELECT VERSION()'        
+    sql = 'SELECT * from comment'        
     cursor.execute(sql)                     # 使用游标执行SQL语句
     
-    data = cursor.fetchone()                # 遍历单条数据
-    print(data)
-
+    # data = cursor.fetchone()                # 遍历单条数据
+    results = cursor.fetchall()
+    for i  in results :
+        openid = i[0]
+        isbn = i[1]
+        score = i[2]
+        # print('openid:{},isbn:{},score:{}'.format(openid, isbn, score))
+        rates.append([str(openid), int(isbn), int(score)])
+    # print(rates)
     connection.close()                      # 关闭数据库
+    return rates
 
 # 读取评分记录
 def readRecord(fileData):
@@ -36,6 +45,7 @@ def readRecord(fileData):
     for line in data:
         dataLine=line.split("/")
         rates.append([str(dataLine[0]),int(dataLine[1]),int(dataLine[2])])
+    print(rates)
     return rates
 
 #获取书籍列表
@@ -148,18 +158,22 @@ def recommondation(user_id, user_dict, K):
 
 # 主程序
 if __name__=='__main__':
-    user_id='aaaaa'
-    dataItemTemp=readRecord('ml-100k/u.data_small')
+    # user_id='aaaaa'
+    # dataItemTemp=readRecord('ml-100k/u.data_small')
+    # user_id='oEdrT5D5D5st3CH4phAkATOgLGKM'
+    user_id=sys.argv[1]
+    dataItemTemp=readRecordFromDateBase()
     user_dict,book_dict=createMarkMatrix(dataItemTemp)
     bookTemp=recommondation(user_id, user_dict, 10)
-    rows=[]
-    table=Texttable()                                              #创建表格并显示
-    table.set_deco(Texttable.HEADER)
-    table.set_cols_dtype(['t','t','a'])
-    table.set_cols_align(["l","l","l"])
-    rows.append(["被推荐用户","被推荐书籍的ISBN","期待值"])
-    for i in bookTemp:
-        rows.append([user_id, i[0], i[1]])
-    table.add_rows(rows) 
-    print(table.draw())
-    readRecordFromDateBase()
+    # rows=[]
+    # table=Texttable()                                              #创建表格并显示
+    # table.set_deco(Texttable.HEADER)
+    # table.set_cols_dtype(['t','t','a'])
+    # table.set_cols_align(["l","l","l"])
+    # rows.append(["被推荐用户","被推荐书籍的ISBN","期待值"])
+    # for i in bookTemp:
+    #     rows.append([user_id, i[0], i[1]])
+    # table.add_rows(rows) 
+    # print(table.draw())
+    print(json.dumps(bookTemp))
+    # print('bookTemp')

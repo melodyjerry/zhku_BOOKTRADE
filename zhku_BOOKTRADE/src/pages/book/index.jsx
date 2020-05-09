@@ -1,10 +1,16 @@
 import Taro, { Component } from '@tarojs/taro'
-import { View } from '@tarojs/components'
+import { View, Swiper, SwiperItem } from '@tarojs/components'
 import * as actions from '@actions/book'
 import { connect } from '@tarojs/redux'
 import { AtAccordion } from 'taro-ui'
-import { BookInfo, BookComment } from '@components'
-import { API_ADD_CENSOR, API_USER_TAKE_BOOK } from '@constants/api'
+import { get } from '@utils/global_data'
+import { BookInfo, BookComment, ShowTypeOne, BookItemRow } from '@components'
+import { 
+    API_ADD_CENSOR, 
+    API_USER_TAKE_BOOK, 
+    API_GET_BOOKS_INFO_BY_ISBN 
+} from '@constants/api'
+import { shortid } from '@utils/methods'
 import fetch from '@utils/request'
 import { ButtomView } from './buttomView'
 import './index.scss'
@@ -20,6 +26,7 @@ class Book extends Component {
     }
 
     state = {
+        commentBooksInfo: [],
         type: '',
         currentPrice: 0,
         originPrice: 0,
@@ -27,17 +34,53 @@ class Book extends Component {
     }
 
 
-    async componentDidMount() {
+    componentDidShow = async () => {
         const { isbn, type='show' } = this.$router.params
-        const payload = { isbn }
+        let { commentBooksInfo } = this.state
+        let payload = {}
+        if (get('openId')) {
+            payload = { isbn, openid: get('openId') }
+        } else {
+            payload = { isbn }
+        }
         await this.props.dispatchLoadBookInfo(payload)
         await this.props.dispatchLoadBookComment(payload)
-        const { bookInfo } = this.props
+        const { bookInfo, commentBookList } = this.props
+        // 有推荐的书
+        if (commentBookList && commentBookList.length !== 0) {
+            commentBooksInfo = await this.loadRecommendBooks({ commentBookList })
+        }
         this.setState({
+            commentBooksInfo,
             type: type,
             currentPrice: parseInt(bookInfo.price*( type === 'get' ? 0.7 : 0.6 )),
             originPrice: bookInfo.price,
         })
+    }
+
+    loadRecommendBooks = async (params) => {
+        const { commentBookList } = params
+        let isbn_arr_str = ''
+        for (let index = 0; index < commentBookList.length; index++) {
+            if (index !== 0) {
+                isbn_arr_str += ','
+            }
+            isbn_arr_str += commentBookList[index][0]
+            if (index > 2) break
+        }
+        const request = {
+            url: API_GET_BOOKS_INFO_BY_ISBN,
+            payload: {
+                isbn_arr: isbn_arr_str
+            }
+        }
+        try {
+            const response = await fetch(request)
+            return response.data.recommendBooksInfo
+        } catch (err) { 
+            console.log(err) 
+            return ''
+        }
     }
 
     config = {
@@ -55,7 +98,7 @@ class Book extends Component {
      * 捐书/取书按钮
      */
     submit = async (templateId) => {
-        
+        Taro.showLoading({ title: '操作中' })
         const { bookInfo } = this.props
         const { currentPrice, type } = this.state
         const openid = Taro.getStorageSync('openId')
@@ -72,6 +115,7 @@ class Book extends Component {
         }
         try {
             const response = await fetch(request)
+            Taro.hideLoading()
             if (response.data.ret === 0) {
                 Taro.showToast({ title: type === 'sub' ? '捐书成功' : '取书成功', icon: 'success' })
                 setTimeout(() => {
@@ -79,13 +123,14 @@ class Book extends Component {
                 }, 1000)
             }
         } catch (err) {
-            Taro.showToast({ title: err, icon: 'none' })
+            Taro.hideLoading()
+            Taro.showToast({ title: err+'，请重试', icon: 'none' })
         }
     }
 
     render() {
         const { bookInfo, bookComment } = this.props
-        const { currentPrice, originPrice, type } = this.state
+        const { currentPrice, originPrice, type, commentBooksInfo } = this.state
         return(
             <View className={`${baseClass}`}>
                 <View className={`${baseClass}-section`}>
@@ -110,6 +155,38 @@ class Book extends Component {
                       data={bookComment}
                     />
                 </View>
+                {commentBooksInfo.length !== 0 ? 
+                    <View className={`${baseClass}-section`}>
+                        <ShowTypeOne
+                            // extra='换一批'
+                            title='推荐书籍'
+                            // handler={this.handlerClickRefreshHot}
+                        >
+                            <Swiper
+                            className='test-h'
+                            indicatorColor='#999'
+                            displayMultipleItems={3}
+                            indicatorDots
+                            >
+                                {commentBooksInfo.map((value, index) => {
+                                    const { pic, book_name, author, price, isbn, fever } = value
+                                    return(
+                                        <SwiperItem key={shortid(index)}>
+                                            <BookItemRow
+                                            fever={fever}
+                                            isbn={isbn}
+                                            pic={pic}
+                                            book_name={book_name}
+                                            author={author}
+                                            price={price}
+                                            />
+                                        </SwiperItem>
+                                    )
+                                })}
+                            </Swiper>
+                        </ShowTypeOne>
+                    </View>
+                    : null}   
                 <View className={`${baseClass}-end`}>--end--</View>
                 <ButtomView 
                     originPrice={originPrice}

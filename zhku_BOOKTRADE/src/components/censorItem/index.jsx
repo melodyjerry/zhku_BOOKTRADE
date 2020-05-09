@@ -1,5 +1,5 @@
 import Taro, { Component } from "@tarojs/taro"
-import { View, Image, Label, Textarea } from "@tarojs/components"
+import { View, Image, Label, Textarea, Input } from "@tarojs/components"
 import moment from 'moment'
 import { AtAvatar, AtModal, AtModalHeader, AtModalContent, AtModalAction } from 'taro-ui'
 import { API_GET_USER_RECORD, API_UPDATE_USER_STATE } from '@constants/api'
@@ -145,7 +145,14 @@ export default class CensorItem extends Component {
                 >
                     <AtModalHeader>原因</AtModalHeader>
                     <AtModalContent>
-                        <Textarea
+                        {/* <Textarea
+                            value={reson}
+                            className='textarea'
+                            placeholderClass='placeholderClass'
+                            placeholder='请填写原因'
+                            onInput={this.handleTextareaChange}
+                        /> */}
+                        <Input 
                             value={reson}
                             className='textarea'
                             placeholderClass='placeholderClass'

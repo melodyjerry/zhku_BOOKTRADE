@@ -11,6 +11,7 @@ import {
 const INITIAL_STATE ={
     bookInfo: {},
     bookComment: [],
+    commentBookList: [],
     bookScore: {},
     lastestBook: [],
     seachBook: [],
@@ -23,6 +24,7 @@ export default function book(state = INITIAL_STATE, action) {
             return {
                 ...state,
                 bookInfo: action.payload.data.book_info,
+                commentBookList: action.payload.data.commentBookList,
                 bookScore: {
                     oneStar: action.payload.data.oneStar,
                     twoStar: action.payload.data.twoStar,
@@ -45,7 +47,7 @@ export default function book(state = INITIAL_STATE, action) {
         case SEARCHBOOK:
             return {
                 ...state,
-                seachBook: action.payload.data.ret === 0 ? action.payload.data.books_list : {}
+                seachBook: action.payload.data.ret === 0 ? action.payload.data.books_list : []
             }
         default:
             return state

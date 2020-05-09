@@ -1,8 +1,9 @@
 import Taro, { Component } from '@tarojs/taro'
 import { View } from '@tarojs/components'
 import * as actions from '@actions/book'
-import { BookItemColumn, NullData } from '@components/'
+import { BookItemColumn, NullData, Loading } from '@components/'
 import { connect } from '@tarojs/redux'
+import { shortid } from '@utils/methods'
 
 
 const baseClass = 'page'
@@ -15,11 +16,12 @@ class MoreLastestBook extends Component {
     }
 
     state = {
-        show_items: 0,
+        show_items: -5,
     }
 
-    async componentWillPreload(params) {
-        // this.addMorebook()
+
+    componentDidMount = () => {
+        this.addMorebook()
     }
 
     config = {
@@ -27,8 +29,9 @@ class MoreLastestBook extends Component {
     }
     
     async addMorebook() {
+        const { show_items } = this.state
         this.setState({
-            show_items: this.state.show_items+5
+            show_items: show_items+5
         }, () => {
             this.props.dispatchLoadMoreBook({ show_items: this.state.show_items })
         })
@@ -46,11 +49,11 @@ class MoreLastestBook extends Component {
         return(
             // <View>更多书籍，支持下拉刷新</View>
             <View className={`${baseClass}`}>
-                {lastestBook && lastestBook.map((value, index) => {
+                {lastestBook.length !== 0 && lastestBook.map((value, index) => {
                     const { pic, title, isbn, book_quantity, price } = value
                     return(
                         <BookItemColumn 
-                          key={isbn}
+                          key={shortid(index)}
                           isbn={isbn}
                           pic={pic || null}
                           book_name={title}
@@ -59,7 +62,11 @@ class MoreLastestBook extends Component {
                         />
                     )
                 })}
-                {!hasMore && <NullData />}
+                {hasMore === false ? 
+                <NullData />
+                :
+                <Loading />
+                }
             </View>
         )
     }
